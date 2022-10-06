@@ -7,6 +7,7 @@ import com.fundamentosplatzi.springboot.fundamentos.component.ComponentDependenc
 import com.fundamentosplatzi.springboot.fundamentos.entity.User;
 import com.fundamentosplatzi.springboot.fundamentos.pojo.UserPojo;
 import com.fundamentosplatzi.springboot.fundamentos.repository.UserRepository;
+import net.bytebuddy.asm.Advice;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.*;
 
 @SpringBootApplication
 public class FundamentosApplication implements CommandLineRunner {
@@ -51,11 +53,25 @@ public class FundamentosApplication implements CommandLineRunner {
 	}
 
 	private void getInformationJpqlFromUser(){
-		LOGGER.info("Usuario encontrado: " + userRepository.findByUserEmail("Micaela@example.com").orElseThrow(() -> new RuntimeException("No se encontro el usuario")));
+		/*LOGGER.info("Usuario encontrado: " + userRepository.findByUserEmail("Micaela@example.com").orElseThrow(() -> new RuntimeException("No se encontro el usuario")));
 
 		userRepository.findAndSort("J", Sort.by("id").descending())
 				.stream()
 				.forEach(user -> LOGGER.info("Usuarios ordenados por id " + user));
+
+		userRepository.findByName("Franco").stream().forEach(user -> LOGGER.info("Usuario encontrado con query method" + user));
+
+		LOGGER.info("Usuario encontrado: " + userRepository.findByEmailAndName("Franco", "Franco@example.com").orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
+
+		userRepository.findByNameLike("%a%").stream().forEach(user -> LOGGER.info("Usuario findByNameLike " + user));
+
+		userRepository.findByNameOrEmail(null, null).stream().forEach(user -> LOGGER.info("Usuario findByNameOrEmail " + user));*/
+
+	userRepository.findByBirthDateBetween(LocalDate.of(2020, 1, 1), LocalDate.of(2022, 12, 31)).stream().forEach(user -> LOGGER.info("Usuario en intervalo de fechas" + user));
+
+	userRepository.findByNameContainingOrderByIdDesc("a").stream().forEach(user -> LOGGER.info("Usuario encontrado: " + user));
+
+	LOGGER.info("El usuario es: " + userRepository.getAllByBirthDateAndEmail(LocalDate.of(2021, 10, 4), "Pablo@example.com").orElseThrow(() -> new RuntimeException("No se encontro el usuario a partir del named parameter")));
 	}
 
 	private void saveUsersInDataBase(){
